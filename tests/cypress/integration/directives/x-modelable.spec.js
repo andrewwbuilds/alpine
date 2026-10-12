@@ -224,7 +224,7 @@ test('x-modelable keeps a change made right after a morph',
     }
 )
 
-test('x-modelable does not leave a binding behind after a morph',
+test('x-modelable does not resync for a change made after its morphed element is removed',
     html`
         <div x-data="{ outer: 'foo' }">
             <div x-data="{ inner: 'bar' }" x-modelable="inner" x-model="outer">
