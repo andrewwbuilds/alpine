@@ -207,3 +207,37 @@ test('x-modelable does not resync for a change made after its element is removed
         get('h1').should(haveText('foo'))
     }
 )
+
+test('x-modelable keeps a change made right after a morph',
+    html`
+        <div x-data="{ outer: 'foo' }">
+            <div x-data="{ inner: 'bar' }" x-modelable="inner" x-model="outer">
+                <button x-on:click="Alpine.morph($root, $root.outerHTML); inner = 'baz'"></button>
+            </div>
+
+            <h1 x-text="outer"></h1>
+        </div>
+    `,
+    ({ get }) => {
+        get('button').click()
+        get('h1').should(haveText('baz'))
+    }
+)
+
+test('x-modelable does not leave a binding behind after a morph',
+    html`
+        <div x-data="{ outer: 'foo' }">
+            <div x-data="{ inner: 'bar' }" x-modelable="inner" x-model="outer">
+                <button id="1" x-on:click="Alpine.morph($root, $root.outerHTML)"></button>
+                <button id="2" x-on:click="$root.remove(); inner = 'baz'"></button>
+            </div>
+
+            <h1 x-text="outer"></h1>
+        </div>
+    `,
+    ({ get }) => {
+        get('#1').click()
+        get('#2').click()
+        get('h1').should(haveText('foo'))
+    }
+)
